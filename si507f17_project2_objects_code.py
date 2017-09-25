@@ -59,7 +59,7 @@ def sample_get_cache_itunes_data(search_term,media_term="all"):
 		return CACHE_DICTION[unique_ident]
 	else:
 		CACHE_DICTION[unique_ident] = json.loads(requests.get(baseurl, params=params).text)
-		full_text = json.dumps(CACHE_DICTION)
+		full_text = json.dumps(CACHE_DICTION, indent = 2)
 		cache_file_ref = open(CACHE_FNAME,"w")
 		cache_file_ref.write(full_text)
 		cache_file_ref.close()
@@ -86,7 +86,21 @@ print("\n***** PROBLEM 1 *****\n")
 ## - a special len method, which, for the Media class, returns 0 no matter what. (The length of an audiobook might mean something different from the length of a song, depending on how you want to define them!)
 ## - a special contains method (for the in operator) which takes one additional input, as all contains methods must, which should always be a string, and checks to see if the string input to this contains method is INSIDE the string representing the title of this piece of media (the title instance variable)
 
-
+class Media(object):
+    def __init__(self,dictFile):
+        self.title = dictFile["trackName"]
+        self.author = dictFile["artistName"]
+        self.itunes_URL = dictFile["artistViewUrl"]
+        self.itunes_id = dictFile["trackId"]
+    def __str__(self):
+        return '{0} by {1}'.format(self.title,self.author)
+    def __repr__(self):
+        return 'ITUNES MEDIA: {0}'.format(self.itunes_id)
+    def len(self):
+        return 0
+    def __contains__(self,test_string):
+        return test_string in self.title
+        
 
 ## [PROBLEM 2] [400 POINTS]
 print("\n***** PROBLEM 2 *****\n")
