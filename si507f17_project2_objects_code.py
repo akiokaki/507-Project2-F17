@@ -87,16 +87,16 @@ print("\n***** PROBLEM 1 *****\n")
 ## - a special contains method (for the in operator) which takes one additional input, as all contains methods must, which should always be a string, and checks to see if the string input to this contains method is INSIDE the string representing the title of this piece of media (the title instance variable)
 
 class Media(object):
-    def __init__(self,dictFile):
+    def __init__(self, dictFile):
         self.title = dictFile["trackName"]
         self.author = dictFile["artistName"]
         self.itunes_URL = dictFile["artistViewUrl"]
         self.itunes_id = dictFile["trackId"]
     def __str__(self):
-        return '{0} by {1}'.format(self.title,self.author)
+        return '{0} by {1}'.format(self.title, self.author)
     def __repr__(self):
         return 'ITUNES MEDIA: {0}'.format(self.itunes_id)
-    def len(self):
+    def __len__(self):
         return 0
     def __contains__(self,test_string):
         return test_string in self.title
@@ -123,6 +123,16 @@ print("\n***** PROBLEM 2 *****\n")
 
 ## Should have the len method overridden to return the number of seconds in the song. (HINT: The data supplies number of milliseconds in the song... How can you access that data and convert it to seconds?)
 
+class Song(Media):
+    def __init__(self,dictFile):
+        Media.__init__(self, dictFile)
+        self.album = dictFile["collectionName"]
+        self.track_number = dictFile["trackNumber"]
+        self.genre = dictFile["primaryGenreName"]
+        self.miliTime = dictFile["trackTimeMillis"]
+    def __len__(self):
+        seconds = self.miliTime/1000
+        return int(seconds)
 
 
 ### class Movie:
@@ -137,8 +147,20 @@ print("\n***** PROBLEM 2 *****\n")
 
 ## Should have an additional method called title_words_num that returns an integer representing the number of words in the movie description. If there is no movie description, this method should return 0.
 
-
-
+class Movie(Media):
+    def __init__(self,dictFile):
+        Media.__init__(self, dictFile)
+        self.rating = dictFile["contentAdvisoryRating"]
+        self.genre = dictFile["primaryGenreName"]
+        self.miliTime = dictFile["trackTimeMillis"]
+        if len(dictFile["longDescription"])>1:
+            self.description = dictFile["longDescription"]
+        else: self.description = None
+    def __len__(self):
+        minutes = self.miliTime
+        minutes = minutes/60000
+        return int(minutes)
+        
 ## [PROBLEM 3] [150 POINTS]
 print("\n***** PROBLEM 3 *****\n")
 
@@ -149,7 +171,7 @@ print("\n***** PROBLEM 3 *****\n")
 ## NOTE: (The first time you run this file, data will be cached, so the data saved in each variable will be the same each time you run the file, as long as you do not delete your cached data.)
 
 media_samples = sample_get_cache_itunes_data("love")["results"]
-
+#print (media_samples[0]["artistViewUrl"])
 song_samples = sample_get_cache_itunes_data("love","music")["results"]
 
 movie_samples = sample_get_cache_itunes_data("love","movie")["results"]
@@ -164,9 +186,17 @@ movie_samples = sample_get_cache_itunes_data("love","movie")["results"]
 ## a list of Movie objects saved in a variable movie_list.
 
 ## You may use any method of accumulation to make that happen.
-
-
-
+media_list = []
+song_list = []
+movie_list = []
+for each_item in media_samples:
+    media_list.append(Media(each_item))
+    
+for each_item in song_samples:
+    song_list.append(each_item)
+    
+for each_item in movie_samples:
+    movie_list.append(each_item)
 
 ## [PROBLEM 4] [200 POINTS]
 print("\n***** PROBLEM 4 *****\n")
