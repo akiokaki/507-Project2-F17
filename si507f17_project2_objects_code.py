@@ -90,7 +90,7 @@ class Media(object):
     def __init__(self, dictFile):
         self.title = dictFile["trackName"]
         self.author = dictFile["artistName"]
-        self.itunes_URL = dictFile["artistViewUrl"]
+        self.itunes_URL = dictFile["trackViewUrl"]
         self.itunes_id = dictFile["trackId"]
     def __str__(self):
         return '{0} by {1}'.format(self.title, self.author)
@@ -152,14 +152,22 @@ class Movie(Media):
         Media.__init__(self, dictFile)
         self.rating = dictFile["contentAdvisoryRating"]
         self.genre = dictFile["primaryGenreName"]
-        self.miliTime = dictFile["trackTimeMillis"]
+        if 'trackTimeMillis' in dictFile:
+            self.miliTime = dictFile["trackTimeMillis"]
         if len(dictFile["longDescription"])>1:
-            self.description = dictFile["longDescription"]
+            self.description = dictFile["longDescription"].encode('utf-8')
         else: self.description = None
     def __len__(self):
         minutes = self.miliTime
         minutes = minutes/60000
         return int(minutes)
+    def title_words_num(self):
+        if self.description is not None:
+            length_description = len(self.description)
+            return length_description
+        else:
+            return 0
+            
         
 ## [PROBLEM 3] [150 POINTS]
 print("\n***** PROBLEM 3 *****\n")
@@ -190,13 +198,16 @@ media_list = []
 song_list = []
 movie_list = []
 for each_item in media_samples:
-    media_list.append(Media(each_item))
+    media_item = Media(each_item)
+    media_list.append(media_item)
     
 for each_item in song_samples:
-    song_list.append(each_item)
+    song_item = Song(each_item)
+    song_list.append(song_item)
     
 for each_item in movie_samples:
-    movie_list.append(each_item)
+    movie_item = Movie(each_item)
+    movie_list.append(movie_item)
 
 ## [PROBLEM 4] [200 POINTS]
 print("\n***** PROBLEM 4 *****\n")
@@ -227,17 +238,20 @@ print("\n***** PROBLEM 4 *****\n")
 
 ## HINT #4: Write or draw out your plan for this before you actually start writing the code! That will make it much easier.
 
+movie_outfile = open("movies.csv","w")
+movie_outfile.write('"title", "artist", "id", "url", "length"\n')
+for each_movie in movie_list:
+    movie_outfile.write('"{}", "{}", "{}", "{}", "{}"\n'.format(Movie.title, Movie.artist, Movie.id, Movie.url, Movie.length))
+movie_outfile.close()
 
+songs_outfile = open("songs.csv","w")
+songs_outfile.write('"title", "artist", "id", "url", "length"\n')
+for each_songs in song_list:
+    songs_outfile.write('"{}", "{}", "{}", "{}", "{}"\n'.format(Song.title, Song.artist, Song.id, Song.url, Song.length))
+songs_outfile.close()
 
-
-
-
-
-
-
-
-
-
-
-
-
+media_outfile = open("media.csv","w")
+media_outfile.write('"title", "artist", "id", "url", "length"\n')
+for each_media in media_list:
+    movie_outfile.write('"{}", "{}", "{}", "{}", "{}"\n'.format(Media.title, Media.artist, Media.id, Media.url, Media.length))
+media_outfile.close()
