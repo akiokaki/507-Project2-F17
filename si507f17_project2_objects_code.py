@@ -154,6 +154,8 @@ class Movie(Media):
         self.genre = dictFile["primaryGenreName"]
         if 'trackTimeMillis' in dictFile:
             self.miliTime = dictFile["trackTimeMillis"]
+        elif 'trackTimeMillis' not in dictFile:
+            self.miliTime = 0
         if len(dictFile["longDescription"])>1:
             self.description = dictFile["longDescription"].encode('utf-8')
         else: self.description = None
@@ -239,19 +241,19 @@ print("\n***** PROBLEM 4 *****\n")
 ## HINT #4: Write or draw out your plan for this before you actually start writing the code! That will make it much easier.
 
 movie_outfile = open("movies.csv","w")
-movie_outfile.write('"title", "artist", "id", "url", "length"\n')
+movie_outfile.write('title,artist,id,url,length\n')
 for each_movie in movie_list:
-    movie_outfile.write('"{}", "{}", "{}", "{}", "{}"\n'.format(Movie.title, Movie.artist, Movie.id, Movie.url, Movie.length))
+    movie_outfile.write('{},{},{},{},{}\n'.format(each_movie.title, each_movie.author, each_movie.itunes_id, each_movie.itunes_URL, len(each_movie)))
 movie_outfile.close()
 
 songs_outfile = open("songs.csv","w")
-songs_outfile.write('"title", "artist", "id", "url", "length"\n')
+songs_outfile.write('title,artist,id,url,length\n')
 for each_songs in song_list:
-    songs_outfile.write('"{}", "{}", "{}", "{}", "{}"\n'.format(Song.title, Song.artist, Song.id, Song.url, Song.length))
+    songs_outfile.write('{},{},{},{},{}\n'.format(each_songs.title, each_songs.author, each_songs.itunes_id, each_songs.itunes_URL, len(each_songs)))
 songs_outfile.close()
 
 media_outfile = open("media.csv","w")
-media_outfile.write('"title", "artist", "id", "url", "length"\n')
+media_outfile.write('title,artist,id,url,length\n')
 for each_media in media_list:
-    movie_outfile.write('"{}", "{}", "{}", "{}", "{}"\n'.format(Media.title, Media.artist, Media.id, Media.url, Media.length))
+    media_outfile.write('{},{},{},{},{}\n'.format(each_media.title, each_media.author, each_media.itunes_id, each_media.itunes_URL, len(each_media)))
 media_outfile.close()
